@@ -1,0 +1,1 @@
+var trivium = require("./trivium");
