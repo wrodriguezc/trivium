@@ -14,7 +14,7 @@ var mkdirSync = require('graceful-fs').mkdirSync;
 //Compilation variables
 var scriptsDirectory            = 'scripts';
 var cssDirectory                = 'css';
-var destinationDirectory        = 'build';
+var destinationDirectory        = 'wwwroot';
 var productname                 = 'trivium';
 
 gulp.task('clean', function() {
