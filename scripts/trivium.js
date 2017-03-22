@@ -1,130 +1,129 @@
 /*
-Trivium in Javascript, 29 April 2009 by Charlie Loyd <c@6jo.org>.
+Copyright 2017 William Rodriguez Calvo
 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-function shifter(state) {
-  var ceil = state.length;
-  var ptr = 0;
+var BitArray = require("./bitarray");
+var Register = require("./register");
 
-  this.get = function (n) {
-    n = (n + ceil + ptr) % ceil;
-    return state[n];
-  }
+var Trivium = function () {
 
-  this.shift = function (e) {
-    state[ptr] = e;
-    ptr = (ptr + 1) % ceil;
-  }
-}
+    var STATE_SIZE = 288;
 
-function repeat(e, n) {
-  var r = [];
-  for (var i = 0; i < n; i++) {
-    r.push(e);
-  }
-  return r;
-}
+    var S_START = 1;
+    var S_END = 288;
 
-function trivium_gen(key, iv) {
-  var stream_bit = -1152; // the first bits are weak, remember?
-  var key = string_to_bits(key).slice(0, 80);
-  var iv = string_to_bits(iv).slice(0, 80);
+    var R1_START = 1;
+    var R1_END = 93;
+    var R1_FILLSTART = 81;
 
-  var A = new shifter(repeat(0, 93 - key.length).concat(key));
-  var B = new shifter(repeat(0, 84 - iv.length).concat(iv));
-  var C = new shifter(repeat(1, 3).concat(repeat(0, 111 - 3)));
+    var R2_START = 94;
+    var R2_END = 177;
+    var R2_FILLSTART = 81; 
 
-  this.nextbit = function () {
-    var bit = C.get(-66) ^ C.get(-111) ^
-      A.get(-66) ^ A.get(-93) ^
-      B.get(-69) ^ B.get(-84);
+    var R3_START = 178;
+    var R3_END = 288;
+    var R3_FILLSTART_ZEROS = 1;
+    var R3_FILLSTART_ONES = 109;
 
-    var A_in = C.get(-66) ^ C.get(-111) ^
-      C.get(-110) & C.get(-109) ^
-      A.get(-69);
+    var sharedState = new ArrayBuffer(STATE_SIZE);
 
-    var B_in = A.get(-66) ^ A.get(-93) ^
-      A.get(-92) & A.get(-91) ^
-      B.get(-78);
+    var s = new Register(sharedState, S_START, S_END);
+    var r1 = new Register(sharedState, R1_START, R1_END);
+    var r2 = new Register(sharedState, R2_START, R2_END);
+    var r3 = new Register(sharedState, R3_START, R3_END);
 
-    var C_in = B.get(-69) ^ B.get(-84) ^
-      B.get(-83) & B.get(-82) ^
-      C.get(-87);
+    this.setup = function (key, iv) {
 
-    A.shift(A_in);
-    B.shift(B_in);
-    C.shift(C_in);
+        r1.copyFromBytes(key);
+        r1.fill(R1_FILLSTART, 0);
 
-    stream_bit++;
-    return bit;
-  }
+        r2.copyFromBytes(iv);
+        r2.fill(R2_FILLSTART, 0);     
 
-  this.nextpoint = function () {
-    var bits = [];
-    for (var b = 0; b < 16; b++) {
-      bits[b] = this.nextbit();
-    }
-    return bits_to_point(bits);
-  }
+        r3.fill(R3_FILLSTART_ZEROS, 0);
+        r3.fill(R3_FILLSTART_ONES, 1);
 
-  // but first, fast forward to the real bits:
-  while (stream_bit < 0) {
-    this.nextbit();
-  }
-}
+        for (var i = 0; i < 4 * STATE_SIZE; i++) {
+            this.nextBit();
+        }
+    };
 
+    this.nextBit = function () {
 
-function encrypt(key, iv, s) {
-  s = string_to_points(s);
-  var plain = [];
-  var T = new trivium_gen(key, iv);
-  for (var point = 0; point < s.length; point++) {
-    plain[point] = s[point] ^ T.nextpoint();
-  }
-  return plain;
-}
+        var t1, t2, t3, zi;
 
-// Now some unsexy (and under-optimized) stuff for
-// bits <-> codepoints <-> string conversion.
+        t1 = s.bit(66) ^ s.bit(93);
+        t2 = s.bit(162) ^ s.bit(177);
+        t3 = s.bit(243) ^ s.bit(288);
 
-function string_to_points(str) {
-  var points = [];
-  for (var p = 0; p < str.length; p++) {
-    points[p] = str.charCodeAt(p);
-  }
-  return points;
-}
+        zi = (t1 ^ t2) ^ t3;
 
-function points_to_string(points) {
-  return String.fromCharCode.apply(null, points);
-}
+        t1 ^= s.bit(91) & s.bit(92) ^ s.bit(171);
+        t2 ^= s.bit(175) & s.bit(176) ^ s.bit(264);
+        t3 ^= s.bit(286) & s.bit(287) ^ s.bit(69);
 
-function bits_to_point(bits) {
-  var point = 0;
-  for (var i = 0; i < 16; i++) {
-    if (bits[i])
-      point += (2 << i) / 2;
-  }
-  return point;
-}
+        r1.rotate(t3);
+        r2.rotate(t1);
+        r3.rotate(t2);
 
-function point_to_bits(point) {
-  var bits = [];
-  for (var i = 0; i < 16; i++) {
-    bits.push((point >> i) % 2);
-  }
-  return bits;
-}
+        return zi;
+    };
 
-function string_to_bits(s) {
-  return points_to_bits(string_to_points(s));
-}
+   this.encode = function (input, debug) {
 
-function points_to_bits(pts) {
-  bits = [];
-  for (var p = 0; p < pts.length; p++) {
-    bits = bits.concat(point_to_bits(pts[p]));
-  }
-  return bits;
-}
+        var output = new Uint8Array(input.length);
+        var bitArray = new BitArray();
+
+        for (var i = 0; i < input.length; i++) {
+
+            var inputBits = bitArray.fromByte(input[i]); 
+            var outputBits = new Uint8Array(8);
+
+            for (var j = 0; j < inputBits.length; j++) {
+                outputBits[j] = inputBits[j] ^ this.nextBit();
+            }
+
+            output[i] = bitArray.toByte(outputBits);
+        }
+
+        return output;
+    };
+
+    this.debug = function (input, debug) {
+
+        var output = new Uint8Array(input.length);
+        var bitArray = new BitArray();
+
+        console.log("Input\tInput bits\tKey bits\tChiper bitsOutput");
+
+        for (var i = 0; i < input.length; i++) {
+
+            var inputBits = bitArray.fromByte(input[i]); 
+            var keyBits = new Uint8Array(8);
+            var outputBits = new Uint8Array(8);
+
+            for (var j = 0; j < inputBits.length; j++) {
+                keyBits[j] = this.nextBit();
+                outputBits[j] = inputBits[j] ^ keyBits[j];
+            }
+
+            output[i] = bitArray.toByte(outputBits);
+
+            if (true){
+                console.log("0x" + input[i].toString(16) + "\t" + inputBits + "\t" + keyBits + "\t" + outputBits + "\t" + "0x" + output[i].toString(16) );
+            }
+
+        }
+
+        return output;
+    };
+
+};
+
+module.exports = Trivium;
