@@ -108,7 +108,7 @@ var Trivium = function () {
             var keyBits = new Uint8Array(8);
             var outputBits = new Uint8Array(8);
 
-            for (var j = 0; j < inputBits.length; j++) {
+            for (var j = inputBits.length -1; j >= 0; j--) {
                 keyBits[j] = this.nextBit();
                 outputBits[j] = inputBits[j] ^ keyBits[j];
             }
