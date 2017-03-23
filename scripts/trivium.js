@@ -62,7 +62,7 @@ var Trivium = function () {
         t2 = s.bit(162) ^ s.bit(177);
         t3 = s.bit(243) ^ s.bit(288);
 
-        zi = (t1 ^ t2) ^ t3;
+        zi = t1 ^ t2 ^ t3;
 
         t1 ^= s.bit(91) & s.bit(92) ^ s.bit(171);
         t2 ^= s.bit(175) & s.bit(176) ^ s.bit(264);
@@ -85,7 +85,7 @@ var Trivium = function () {
             var inputBits = bitArray.fromByte(input[i]); 
             var outputBits = new Uint8Array(8);
 
-            for (var j = 0; j < inputBits.length; j++) {
+            for (var j = inputBits.length -1; j >= 0; j--) {
                 outputBits[j] = inputBits[j] ^ this.nextBit();
             }
 
