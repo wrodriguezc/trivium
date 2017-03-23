@@ -15,12 +15,11 @@ var mkdirSync = require('graceful-fs').mkdirSync;
 var scriptsDirectory            = 'scripts';
 var cssDirectory                = 'css';
 var rootDirectory               = 'site';
-var destinationDirectory        = 'site/wwwroot';
+var destinationDirectory        = 'dist';
 var productname                 = 'trivium';
 
 gulp.task('clean', function() {
-  del.sync([rootDirectory], { force : true });
-  mkdirSync(rootDirectory);  
+  del.sync([destinationDirectory], { force : true });
   mkdirSync(destinationDirectory);
 });
 
