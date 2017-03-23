@@ -79,13 +79,13 @@ var Trivium = function () {
 
         var output = new Uint8Array(input.length);
         var bitArray = new BitArray();
+        var outputBits = new Uint8Array(8);
 
         for (var i = 0; i < input.length; i++) {
 
             var inputBits = bitArray.fromByte(input[i]); 
-            var outputBits = new Uint8Array(8);
 
-            for (var j = inputBits.length -1; j >= 0; j--) {
+            for (var j = 7; j >= 0; j--) {
                 outputBits[j] = inputBits[j] ^ this.nextBit();
             }
 
@@ -95,29 +95,27 @@ var Trivium = function () {
         return output;
     };
 
-    this.debug = function (input, debug) {
+    this.debug = function (input) {
 
         var output = new Uint8Array(input.length);
         var bitArray = new BitArray();
+        var outputBits = new Uint8Array(8);
+        var keyBits = new Uint8Array(8);
 
         console.log("Input\tInput bits\tKey bits\tChiper bitsOutput");
 
         for (var i = 0; i < input.length; i++) {
 
             var inputBits = bitArray.fromByte(input[i]); 
-            var keyBits = new Uint8Array(8);
-            var outputBits = new Uint8Array(8);
 
-            for (var j = inputBits.length -1; j >= 0; j--) {
+            for (var j = 7; j >= 0; j--) {
                 keyBits[j] = this.nextBit();
                 outputBits[j] = inputBits[j] ^ keyBits[j];
             }
 
             output[i] = bitArray.toByte(outputBits);
 
-            if (true){
-                console.log("0x" + input[i].toString(16) + "\t" + inputBits + "\t" + keyBits + "\t" + outputBits + "\t" + "0x" + output[i].toString(16) );
-            }
+            console.log("0x" + input[i].toString(16) + "\t" + inputBits + "\t" + keyBits + "\t" + outputBits + "\t" + "0x" + output[i].toString(16) );
 
         }
 
