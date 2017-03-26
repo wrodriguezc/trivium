@@ -187,7 +187,7 @@ window.onload = function () {
             return;            
         }
 
-        if (file !== undefined){
+        if (file !== undefined && file !== null){
 
             var reader  = new FileReader();
 
