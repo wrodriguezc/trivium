@@ -33,7 +33,7 @@ var Utils = function () {
     this.arrayToHex = function (array) {
         var str = "";
         for (var i = 0; i < string.length; i++) {
-            str += array[i] < 15 ? "0" + array[i].toString(16) : array[i].toString(16);
+            str += array[i] <= 15 ? "0" + array[i].toString(16) : array[i].toString(16);
         }
         return str;
     };
