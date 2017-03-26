@@ -157,7 +157,7 @@ function encode(key, vi, message){
     var result = trivium.encode(messageArray);
 
     $("#asciiresult-text").val(utils.ASCIIToString(result));
-    $("#hexadecimalresult-text").val(utils.ASCIIToHex(result));    
+    $("#hexadecimalresult-text").val(utils.arrayToHex(result));    
 }
 
 window.onload = function () {
@@ -422,6 +422,15 @@ var Utils = function () {
         var str = "";
         for (var i = 0; i < string.length; i++) {
             str += string.charCodeAt(i).toString(16);
+        }
+        return str;
+    };
+
+
+    this.arrayToHex = function (array) {
+        var str = "";
+        for (var i = 0; i < string.length; i++) {
+            str += array[i] < 15 ? "0" + array[i].toString(16) : array[i].toString(16);
         }
         return str;
     };

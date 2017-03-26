@@ -53,7 +53,7 @@ function encode(key, vi, message){
     var result = trivium.encode(messageArray);
 
     $("#asciiresult-text").val(utils.ASCIIToString(result));
-    $("#hexadecimalresult-text").val(utils.ASCIIToHex(result));    
+    $("#hexadecimalresult-text").val(utils.arrayToHex(result));    
 }
 
 window.onload = function () {
