@@ -160,7 +160,7 @@ function encode(key, vi, message){
 
 window.onload = function () {
 
-    if (("#hexadecimalresult-text").val() === "en"){
+    if ($("#language").val() === "en"){
         Localization.KeyError = "Please specify a 10 character key";
         Localization.IVError = "Please specify a 10 character iv";       
     }else{
