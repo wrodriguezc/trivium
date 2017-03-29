@@ -6,6 +6,7 @@ var cssnano = require('gulp-cssnano');
 var jshint 	= require('gulp-jshint');
 var browserify = require('gulp-browserify');
 var rename = require('gulp-rename');
+var preprocess = require('gulp-preprocess');
 
 //File system functions
 var del = require('del');

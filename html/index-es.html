@@ -26,7 +26,7 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
 	<link rel="manifest" href="/manifest.json">
 
-	<title>Trivium JavaScript Implementation</title>
+	<title>Implementación de Trivium en JavaScript</title>
 
 	<!-- Bootstrap core CSS -->
 	<link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -50,13 +50,14 @@
 </head>
 
 <body>
-	<input type="hidden" id="language" value="en">
+	<input type="hidden" id="language" value="es">
+
 	<!-- Fixed navbar -->
 	<div class="navbar navbar-default navbar-fixed-top title">
 		<div class="container">
 				<div class="row">
 					<div class="col-lg-12">
-						<span><b>Trivium JavaScript Implementation</b></span>
+						<span><b>Implementación de Trivium en JavaScript</b></span>
 					</div>
 				</div>
 				<div class="row">
@@ -77,7 +78,7 @@
 
 		<div class="row">
 			<div class="col-lg-12">
-				<label class="form-label" for="usr">Type or paste text</label>
+				<label class="form-label" for="usr">Digite o pegue el texto a procesar</label>
 				<input type="text" class="form-control" id="source-text">
 			</div>		
 		</div>
@@ -97,11 +98,11 @@
 				<div class="row">
 					<div class="col-lg-12">
 					<div class="form-group">
-						<label class="form-label" for="usr">Input is in hexadecimal notation</label>
+						<label class="form-label" for="usr">El texto de entrada está en formato hexadecimal</label>
 						<input id="ishex" type="checkbox" value=""></br>										
-						<label class="form-label" for="usr">Key</label>
+						<label class="form-label" for="usr">Llave</label>
 						<input type="text" class="form-control" id="key">
-						<label class="form-label" for="usr">IV</label>
+						<label class="form-label" for="usr">Vector inicialización</label>
 						<input type="text" class="form-control" id="iv">
 								
 					</div>
@@ -112,7 +113,7 @@
 
 			<div class="row">
 				<div class="col-lg-12">
-					<button id="encode" type="submit" class="btn btn-warning btn-lg">Encode/Decode</button></br>	</br>	
+					<button id="encode" type="submit" class="btn btn-warning btn-lg">Codificar/Decodificar</button></br>	</br>	
 				</div>
 				<!-- /col-lg-6 -->
 			</div>
@@ -125,12 +126,12 @@
 				<div class="row">
 					<div class="col-lg-12">
 					<div class="form-group">
-						<label class="form-label" for="usr">ASCII result</label>
+						<label class="form-label" for="usr">Resultado en ASCII</label>
 						<input type="text" class="form-control" id="asciiresult-text"></br>	
-						<button id="download-ascii" type="submit" class="btn btn-warning btn-lg">Download</button></br></br>																		
-						<label class="form-label" for="usr">Hexadecimal result</label>
+						<button id="download-ascii" type="submit" class="btn btn-warning btn-lg">Descargar</button></br></br>																		
+						<label class="form-label" for="usr">Resultado en hexadecimal</label>
 						<input type="text" class="form-control" id="hexadecimalresult-text"></br>	
-						<button id="download-hexadecimal" type="submit" class="btn btn-warning btn-lg">Download</button></br>												
+						<button id="download-hexadecimal" type="submit" class="btn btn-warning btn-lg">Descargar</button></br>												
 					</div>
 				</div>
 		</div>		

@@ -14,10 +14,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 var Trivium = require("./trivium");
 var Utils = require("./utils");
+var Localization = {};
 
-//
 // Function obtained from http://stackoverflow.com/questions/31048215/how-to-create-txt-file-using-javascript-html5
-
 function makeTextFile (text) {
 
     var data = new Blob([text], {type: "text/plain"});
@@ -30,7 +29,6 @@ function makeTextFile (text) {
     a.download = "encoded.txt";
     a.click();
     window.URL.revokeObjectURL(url);
-
 }
 
 function encode(key, vi, message){
@@ -43,7 +41,7 @@ function encode(key, vi, message){
     var messageArray = null;   
 
     if ($("#ishex").prop("checked")){
-        messageArray = utils.hex2ASCII(message);
+        messageArray = utils.hexToASCII(message);
     }else{
         messageArray = utils.stringToASCII(message);
     }    
@@ -58,6 +56,14 @@ function encode(key, vi, message){
 
 window.onload = function () {
 
+    if (("#hexadecimalresult-text").val() === "en"){
+        Localization.KeyError = "Please specify a 10 character key";
+        Localization.IVError = "Please specify a 10 character iv";       
+    }else{
+        Localization.KeyError = "Por favor especifique una llave de exactamente 10 caracteres";
+        Localization.IVError = "Por favor especifique un vector de inicialización de exactamente 10 caracteres";        
+    }
+
     $( "#download-ascii" ).click(function() {
         makeTextFile($("#asciiresult-text").val());
     });
@@ -69,17 +75,17 @@ window.onload = function () {
     $( "#encode").click(function() {
 
         var key = $("#key").val();
-        var vi = $("#vi").val();
+        var iv = $("#iv").val();
         var file = document.querySelector("input[type=file]").files[0];
         var message = $("#source-text").val();
 
         if (key ===  undefined || key === null || key === "" || key.length !== 10){
-            alert("Please specify a key with 10 characters");
+            alert(Localization.KeyError);
             return;
         }
 
-        if (vi ===  undefined || vi === null || vi === "" || vi.length !== 10){
-            alert("Please specify a vi with 10 characters");
+        if (vi ===  undefined || iv === null || iv === "" || vi.length !== 10){
+            alert(Localization.IVError);
             return;            
         }
 
@@ -88,7 +94,7 @@ window.onload = function () {
             var reader  = new FileReader();
 
             reader.addEventListener("load", function () {
-                encode(key, vi, reader.result);
+                encode(key, iv, reader.result);
             }, false);
 
             if (file) {

@@ -1,34 +1,14 @@
+/*
+Copyright 2017 William Rodriguez Calvo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 var Utils = function () {
-
-    this.hex2string = function (hexx) {
-
-        var hex = hexx.toString();
-        var str = "";
-
-        for (var i = 0; i < hex.length; i += 2) {
-            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-        }
-
-        return str;
-    };
-
-    this.hexformatedString = function (hexx) {
-        var hex = hexx.toString();
-        var str = "";
-        for (var i = 0; i < hex.length; i += 2) {
-            str += "0x" + hex.substr(i, 2) + ",";
-        }
-        return str;
-    };
-
-    this.stringToHex = function (string) {
-        var str = "";
-        for (var i = 0; i < string.length; i++) {
-            str += string.charCodeAt(i).toString(16);
-        }
-        return str;
-    };
-
 
     this.arrayToHex = function (array) {
         var str = "";
@@ -37,14 +17,6 @@ var Utils = function () {
         }
         return str;
     };
-
-    this.stringToFormatedHex = function (string) {
-        var str = "";
-        for (var i = 0; i < string.length; i++) {
-            str += "0x" + string.charCodeAt(i).toString(16) + ",";
-        }
-        return str;
-    };    
 
     this.stringToASCII = function (string) {
         var chars = new Uint8Array(string.length);
@@ -62,15 +34,7 @@ var Utils = function () {
         return string;
     };
 
-    this.ASCIIToHex= function (chars) {
-        var string = "";
-        for (var i = 0; i < chars.length; i++) {
-            string += chars[i].toString(16);
-        }
-        return string;
-    };
-
-    this.hex2ASCII = function (hexx) {
+    this.hexToASCII = function (hexx) {
         
         var chars = new Uint8Array(hexx.length / 2);
         var hex = hexx.toString();

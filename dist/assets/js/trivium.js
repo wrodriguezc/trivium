@@ -118,10 +118,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 var Trivium = require("./trivium");
 var Utils = require("./utils");
+var Localization = {};
 
-//
 // Function obtained from http://stackoverflow.com/questions/31048215/how-to-create-txt-file-using-javascript-html5
-
 function makeTextFile (text) {
 
     var data = new Blob([text], {type: "text/plain"});
@@ -134,7 +133,6 @@ function makeTextFile (text) {
     a.download = "encoded.txt";
     a.click();
     window.URL.revokeObjectURL(url);
-
 }
 
 function encode(key, vi, message){
@@ -147,7 +145,7 @@ function encode(key, vi, message){
     var messageArray = null;   
 
     if ($("#ishex").prop("checked")){
-        messageArray = utils.hex2ASCII(message);
+        messageArray = utils.hexToASCII(message);
     }else{
         messageArray = utils.stringToASCII(message);
     }    
@@ -162,6 +160,14 @@ function encode(key, vi, message){
 
 window.onload = function () {
 
+    if (("#hexadecimalresult-text").val() === "en"){
+        Localization.KeyError = "Please specify a 10 character key";
+        Localization.IVError = "Please specify a 10 character iv";       
+    }else{
+        Localization.KeyError = "Por favor especifique una llave de exactamente 10 caracteres";
+        Localization.IVError = "Por favor especifique un vector de inicialización de exactamente 10 caracteres";        
+    }
+
     $( "#download-ascii" ).click(function() {
         makeTextFile($("#asciiresult-text").val());
     });
@@ -173,17 +179,17 @@ window.onload = function () {
     $( "#encode").click(function() {
 
         var key = $("#key").val();
-        var vi = $("#vi").val();
+        var iv = $("#iv").val();
         var file = document.querySelector("input[type=file]").files[0];
         var message = $("#source-text").val();
 
         if (key ===  undefined || key === null || key === "" || key.length !== 10){
-            alert("Please specify a key with 10 characters");
+            alert(Localization.KeyError);
             return;
         }
 
-        if (vi ===  undefined || vi === null || vi === "" || vi.length !== 10){
-            alert("Please specify a vi with 10 characters");
+        if (vi ===  undefined || iv === null || iv === "" || vi.length !== 10){
+            alert(Localization.IVError);
             return;            
         }
 
@@ -192,7 +198,7 @@ window.onload = function () {
             var reader  = new FileReader();
 
             reader.addEventListener("load", function () {
-                encode(key, vi, reader.result);
+                encode(key, iv, reader.result);
             }, false);
 
             if (file) {
@@ -395,37 +401,17 @@ var Trivium = function () {
 
 module.exports = Trivium;
 },{"./bitarray":1,"./register":3}],5:[function(require,module,exports){
+/*
+Copyright 2017 William Rodriguez Calvo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 var Utils = function () {
-
-    this.hex2string = function (hexx) {
-
-        var hex = hexx.toString();
-        var str = "";
-
-        for (var i = 0; i < hex.length; i += 2) {
-            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-        }
-
-        return str;
-    };
-
-    this.hexformatedString = function (hexx) {
-        var hex = hexx.toString();
-        var str = "";
-        for (var i = 0; i < hex.length; i += 2) {
-            str += "0x" + hex.substr(i, 2) + ",";
-        }
-        return str;
-    };
-
-    this.stringToHex = function (string) {
-        var str = "";
-        for (var i = 0; i < string.length; i++) {
-            str += string.charCodeAt(i).toString(16);
-        }
-        return str;
-    };
-
 
     this.arrayToHex = function (array) {
         var str = "";
@@ -434,14 +420,6 @@ var Utils = function () {
         }
         return str;
     };
-
-    this.stringToFormatedHex = function (string) {
-        var str = "";
-        for (var i = 0; i < string.length; i++) {
-            str += "0x" + string.charCodeAt(i).toString(16) + ",";
-        }
-        return str;
-    };    
 
     this.stringToASCII = function (string) {
         var chars = new Uint8Array(string.length);
@@ -459,15 +437,7 @@ var Utils = function () {
         return string;
     };
 
-    this.ASCIIToHex= function (chars) {
-        var string = "";
-        for (var i = 0; i < chars.length; i++) {
-            string += chars[i].toString(16);
-        }
-        return string;
-    };
-
-    this.hex2ASCII = function (hexx) {
+    this.hexToASCII = function (hexx) {
         
         var chars = new Uint8Array(hexx.length / 2);
         var hex = hexx.toString();
