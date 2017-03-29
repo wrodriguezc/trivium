@@ -135,13 +135,13 @@ function makeTextFile (text) {
     window.URL.revokeObjectURL(url);
 }
 
-function encode(key, vi, message){
+function encode(key, iv, message){
 
     var trivium = new Trivium();   
     var utils = new Utils();
 
     var keyArray = utils.stringToASCII(key);
-    var viArray = utils.stringToASCII(vi);
+    var ivArray = utils.stringToASCII(iv);
     var messageArray = null;   
 
     if ($("#ishex").prop("checked")){
@@ -150,7 +150,7 @@ function encode(key, vi, message){
         messageArray = utils.stringToASCII(message);
     }    
 
-    trivium.setup(keyArray, viArray);
+    trivium.setup(keyArray, ivArray);
 
     var result = trivium.encode(messageArray);
 
@@ -188,7 +188,7 @@ window.onload = function () {
             return;
         }
 
-        if (vi ===  undefined || iv === null || iv === "" || vi.length !== 10){
+        if (iv ===  undefined || iv === null || iv === "" || vi.length !== 10){
             alert(Localization.IVError);
             return;            
         }
@@ -206,7 +206,7 @@ window.onload = function () {
             }                
             
         }else{
-            encode(key, vi, message);
+            encode(key, iv, message);
         }
 
     });
