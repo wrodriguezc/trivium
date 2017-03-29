@@ -84,7 +84,7 @@ window.onload = function () {
             return;
         }
 
-        if (iv ===  undefined || iv === null || iv === "" || vi.length !== 10){
+        if (iv ===  undefined || iv === null || iv === "" || iv.length !== 10){
             alert(Localization.IVError);
             return;            
         }
